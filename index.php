@@ -39,11 +39,10 @@ $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
                 <?= $todo['is_done'] ? '되돌리기' : '완료' ?>
               </a>
 
-              <a href="delete.php?id=<?= $todo['id'] ?>"
-                 class="btn btn-sm btn-outline-danger"
-                 onclick="return confirm('삭제하시겠습니까?')">
-                삭제
-              </a>
+            <form action="delete.php" method="POST" onsubmit="return confirm('삭제하시겠습니까?')" style="display:inline;">
+                <input type="hidden" name="id" value="<?= $todo['id'] ?>">
+                <button type="submit" class="btn btn-sm btn-outline-danger">삭제</button>
+            </form>
 
              <a href="edit.php?id=<?= $todo['id'] ?>"
                 class="btn btn-sm btn-outline-secondary">
