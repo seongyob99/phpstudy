@@ -1,7 +1,7 @@
 <?php
 require 'db.php';
 
-$id = $_GET['id'] ?? 0;
+$id = (int)$_GET['id'] ?? 0;
 
 $stmt = $pdo->prepare("
   UPDATE todos 

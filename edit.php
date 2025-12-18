@@ -1,7 +1,7 @@
 <?php
 require 'db.php';
 
-$id = $_GET['id'] ?? 0;
+$id =(int)$_GET['id'] ?? 0;
 
 // POST 요청이면 수정 처리
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
