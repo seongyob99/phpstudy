@@ -1,3 +1,4 @@
+<!-- 글 추가 -->
 <?php
 require 'db.php';
 

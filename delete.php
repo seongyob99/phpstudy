@@ -1,3 +1,4 @@
+<!-- 삭제 php -->
 <?php
 require 'db.php';
 
