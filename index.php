@@ -33,7 +33,6 @@ $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
             <h5 class="card-title <?= $todo['is_done'] ? 'text-decoration-line-through text-muted' : '' ?>">
               <?= htmlspecialchars($todo['title']) ?>
             </h5>
-
             <div class="d-flex justify-content-end gap-2">
               <a href="toggle.php?id=<?= $todo['id'] ?>"
                  class="btn btn-sm btn-outline-success">
@@ -45,6 +44,11 @@ $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
                  onclick="return confirm('삭제하시겠습니까?')">
                 삭제
               </a>
+
+             <a href="edit.php?id=<?= $todo['id'] ?>"
+                class="btn btn-sm btn-outline-secondary">
+                수정
+            </a>
             </div>
 
           </div>
