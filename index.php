@@ -4,6 +4,7 @@ require 'db.php';
 
 $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
