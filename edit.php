@@ -9,7 +9,8 @@ $service = new TodoService(new TodoRepository($pdo));
 // POST 요청이면 수정 처리
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'] ?? '';
-    $service->edit($id, $title);
+    $content = $_POST['content'] ?? '';
+    $service->edit($id, $title, $content);
 
     header("Location: index.php");
     exit;
@@ -37,12 +38,16 @@ if (!$todo) {
   <h3 class="mb-3">✏️ TODO 수정</h3>
 
   <form method="post">
-    <input
-      class="form-control mb-3"
-      name="title"
-      value="<?= htmlspecialchars($todo['title']) ?>"
-      required
-    >
+    <div class="mb-3">
+      <label class="form-label">제목</label>
+      <input type="text" name="title" class="form-control" 
+             value="<?= htmlspecialchars($todo['title']) ?>" required>
+    </div>
+
+    <div class="mb-3">
+      <label class="form-label">내용</label>
+      <textarea name="content" class="form-control" rows="5"><?= htmlspecialchars($todo['content'] ?? '') ?></textarea>
+    </div>
 
     <button class="btn btn-primary">수정</button>
     <a href="index.php" class="btn btn-secondary">취소</a>

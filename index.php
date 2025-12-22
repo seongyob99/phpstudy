@@ -32,18 +32,14 @@ $totalPages = $data['pagination']['totalPages'];
 <div class="container py-5">
   <h2 class="mb-4">📝 TODO List</h2>
 
-  <!-- 추가 폼 -->
-  <form class="d-flex mb-4" method="post" action="add.php">
-    <input class="form-control me-2" name="title" placeholder="할 일 입력" required>
-    <button class="btn btn-primary">추가</button>
-  </form>
-
-  <!-- 검색 -->
-<form class="d-flex mb-3" method="get" action="index.php">
-    <input class="form-control me-2" name="search" placeholder="검색어 입력" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
-    <button class="btn btn-primary" type="submit">검색</button>
+  <!-- 검색 및 글쓰기 버튼 -->
+  <form class="d-flex mb-4 gap-2" method="get" action="index.php">
+    <div class="input-group">
+      <input class="form-control" name="search" placeholder="검색어 입력" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+      <button class="btn btn-primary" type="submit">검색</button>
+    </div>
+    <a href="add.php" class="btn btn-success text-nowrap">글쓰기</a>
     <?php if(isset($_GET['search'])): ?>
-        <a href="index.php" class="btn btn-outline-secondary">초기화</a>
     <?php endif; ?>
 </form>
 
@@ -61,6 +57,9 @@ $totalPages = $data['pagination']['totalPages'];
             <h5 class="card-title <?= $todo['is_done'] ? 'text-decoration-line-through text-muted' : '' ?>">
               <?= htmlspecialchars($todo['title']) ?>
             </h5>
+            <p class="card-text text-muted small">
+              <?= nl2br(htmlspecialchars($todo['content'] ?? '')) ?>
+            </p>
             <div class="d-flex justify-content-end gap-2">
               <a href="toggle.php?id=<?= $todo['id'] ?>"
                  class="btn btn-sm btn-outline-success">

@@ -42,14 +42,14 @@ class TodoRepository {
         return $stmt->fetch();
     }
 
-    public function save($title) {
-        $stmt = $this->pdo->prepare("INSERT INTO todos (title) VALUES (?)");
-        $stmt->execute([$title]);
+    public function save($title, $content) {
+        $stmt = $this->pdo->prepare("INSERT INTO todos (title, content) VALUES (?, ?)");
+        $stmt->execute([$title, $content]);
     }
 
-    public function update($id, $title) {
-        $stmt = $this->pdo->prepare("UPDATE todos SET title = ? WHERE id = ?");
-        $stmt->execute([$title, $id]);
+    public function update($id, $title, $content) {
+        $stmt = $this->pdo->prepare("UPDATE todos SET title = ?, content = ? WHERE id = ?");
+        $stmt->execute([$title, $content, $id]);
     }
 
     public function toggle($id) {

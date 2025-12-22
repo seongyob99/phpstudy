@@ -41,9 +41,9 @@ class TodoService {
         ];
     }
 
-    public function add($title) {
+    public function add($title, $content) {
         if ($title !== '') {
-            $this->repository->save($title);
+            $this->repository->save($title, $content);
         }
     }
 
@@ -51,9 +51,9 @@ class TodoService {
         return $this->repository->findById($id);
     }
 
-    public function edit($id, $title) {
+    public function edit($id, $title, $content) {
         if ($title !== '') {
-            $this->repository->update($id, $title);
+            $this->repository->update($id, $title, $content);
         }
     }
 
