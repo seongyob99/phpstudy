@@ -3,6 +3,16 @@
 require 'db.php';
 
 $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
+
+// 검색
+$search = $_GET['search'] ?? '';
+if ($search !== '') {
+  $stmt = $pdo->prepare("SELECT * FROM todos WHERE title LIKE ? ORDER BY id DESC");
+  $stmt->execute(["%$search%"]);
+  $todos = $stmt->fetchAll();
+} else {
+  $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
+}
 ?>
 
 
@@ -23,6 +33,15 @@ $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
     <input class="form-control me-2" name="title" placeholder="할 일 입력" required>
     <button class="btn btn-primary">추가</button>
   </form>
+
+  <!-- 검색 -->
+<form class="d-flex mb-3" method="get" action="index.php">
+    <input class="form-control me-2" name="search" placeholder="검색어 입력" value="<?= htmlspecialchars($_GET['search'] ?? '') ?>">
+    <button class="btn btn-primary" type="submit">검색</button>
+    <?php if(isset($_GET['search'])): ?>
+        <a href="index.php" class="btn btn-outline-secondary">초기화</a>
+    <?php endif; ?>
+</form>
 
   <div class="row g-3">
     <?php foreach ($todos as $todo): ?>
