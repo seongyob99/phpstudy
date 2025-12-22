@@ -1,25 +1,22 @@
 <?php
-require 'db.php';
+require 'src/db.php';
+require 'src/TodoRepository.php';
+require 'src/TodoService.php';
 
 $id =(int)$_GET['id'] ?? 0;
+$service = new TodoService(new TodoRepository($pdo));
 
 // POST 요청이면 수정 처리
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'] ?? '';
-
-    if ($title !== '') {
-        $stmt = $pdo->prepare("UPDATE todos SET title = ? WHERE id = ?");
-        $stmt->execute([$title, $id]);
-    }
+    $service->edit($id, $title);
 
     header("Location: index.php");
     exit;
 }
 
 // GET 요청이면 기존 데이터 조회
-$stmt = $pdo->prepare("SELECT * FROM todos WHERE id = ?");
-$stmt->execute([$id]);
-$todo = $stmt->fetch();
+$todo = $service->get($id);
 
 if (!$todo) {
     echo "존재하지 않는 TODO";

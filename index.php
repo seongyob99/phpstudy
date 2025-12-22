@@ -1,44 +1,22 @@
 <!-- TODO 목록 화면 -->
 <?php 
-require 'db.php';
+require 'src/db.php';
+require 'src/TodoRepository.php';
+require 'src/TodoService.php';
 
-// 전체, 완료, 남은 할 일 개수 계산
-$countStmt = $pdo->query("SELECT COUNT(*) as total, SUM(is_done) as completed FROM todos");
-$counts = $countStmt->fetch();
-$totalCount = (int)($counts['total'] ?? 0);
-$completedCount = (int)($counts['completed'] ?? 0);
-$remainingCount = $totalCount - $completedCount;
+$service = new TodoService(new TodoRepository($pdo));
 
-// 검색 및 페이징
 $search = $_GET['search'] ?? '';
 $page = (int)($_GET['page'] ?? 1);
 if ($page < 1) $page = 1;
-$limit = 6;
-$offset = ($page - 1) * $limit;
 
-// 검색 조건에 맞는 TODO 개수 계산 (페이징용)
-$countSql = "SELECT COUNT(*) FROM todos";
-$params = [];
-if ($search !== '') {
-    $countSql .= " WHERE title LIKE ?";
-    $params[] = "%$search%";
-}
-$countStmtForPage = $pdo->prepare($countSql);
-$countStmtForPage->execute($params);
-$totalTodos = (int)$countStmtForPage->fetchColumn();
+$data = $service->getDashboardData($page, $search);
 
-// 총 페이지 수 계산
-$totalPages = (int)ceil($totalTodos / $limit);
-
-// 현재 페이지의 TODO 목록 가져오기
-$todosSql = "SELECT * FROM todos";
-if ($search !== '') {
-    $todosSql .= " WHERE title LIKE ?";
-}
-$todosSql .= " ORDER BY id DESC LIMIT $limit OFFSET $offset";
-$stmt = $pdo->prepare($todosSql);
-$stmt->execute($params);
-$todos = $stmt->fetchAll();
+$totalCount = $data['counts']['total'];
+$completedCount = $data['counts']['completed'];
+$remainingCount = $data['counts']['remaining'];
+$todos = $data['todos'];
+$totalPages = $data['pagination']['totalPages'];
 ?>
 
 
