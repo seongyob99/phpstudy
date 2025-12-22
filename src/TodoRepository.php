@@ -43,17 +43,17 @@ class TodoRepository {
     }
 
     public function save($title, $content) {
-        $stmt = $this->pdo->prepare("INSERT INTO todos (title, content) VALUES (?, ?)");
+        $stmt = $this->pdo->prepare("INSERT INTO todos (title, content, created_at, updated_at) VALUES (?, ?, NOW(), NOW())");
         $stmt->execute([$title, $content]);
     }
 
     public function update($id, $title, $content) {
-        $stmt = $this->pdo->prepare("UPDATE todos SET title = ?, content = ? WHERE id = ?");
+        $stmt = $this->pdo->prepare("UPDATE todos SET title = ?, content = ?, updated_at = NOW() WHERE id = ?");
         $stmt->execute([$title, $content, $id]);
     }
 
     public function toggle($id) {
-        $stmt = $this->pdo->prepare("UPDATE todos SET is_done = IF(is_done = 1, 0, 1) WHERE id = ?");
+        $stmt = $this->pdo->prepare("UPDATE todos SET is_done = IF(is_done = 1, 0, 1), updated_at = NOW() WHERE id = ?");
         $stmt->execute([$id]);
     }
 

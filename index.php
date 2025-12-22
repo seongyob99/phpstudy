@@ -60,6 +60,9 @@ $totalPages = $data['pagination']['totalPages'];
             <p class="card-text text-muted small">
               <?= nl2br(htmlspecialchars($todo['content'] ?? '')) ?>
             </p>
+            <p class="card-text text-end"><small class="text-muted">
+              작성: <?= date('Y-m-d', strtotime($todo['created_at'])) ?>
+            </small></p>
             <div class="d-flex justify-content-end gap-2">
               <a href="toggle.php?id=<?= $todo['id'] ?>"
                  class="btn btn-sm btn-outline-success">
