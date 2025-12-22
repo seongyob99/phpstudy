@@ -2,17 +2,28 @@
 <?php 
 require 'db.php';
 
-$todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
+// 전체, 완료, 남은 할 일 개수 계산
+$countStmt = $pdo->query("SELECT COUNT(*) as total, SUM(is_done) as completed FROM todos");
+$counts = $countStmt->fetch();
+$totalCount = (int)($counts['total'] ?? 0);
+$completedCount = (int)($counts['completed'] ?? 0);
+$remainingCount = $totalCount - $completedCount;
 
 // 검색
 $search = $_GET['search'] ?? '';
+
+$sql = "SELECT * FROM todos";
+$params = [];
+
 if ($search !== '') {
-  $stmt = $pdo->prepare("SELECT * FROM todos WHERE title LIKE ? ORDER BY id DESC");
-  $stmt->execute(["%$search%"]);
-  $todos = $stmt->fetchAll();
-} else {
-  $todos = $pdo->query("SELECT * FROM todos ORDER BY id DESC")->fetchAll();
+  $sql .= " WHERE title LIKE ?";
+  $params[] = "%$search%";
 }
+
+$sql .= " ORDER BY id DESC";
+$stmt = $pdo->prepare($sql);
+$stmt->execute($params);
+$todos = $stmt->fetchAll();
 ?>
 
 
@@ -42,6 +53,11 @@ if ($search !== '') {
         <a href="index.php" class="btn btn-outline-secondary">초기화</a>
     <?php endif; ?>
 </form>
+
+  <!-- TODO 요약 -->
+  <div class="alert alert-info mb-4">
+    총 <strong><?= $totalCount ?></strong>개 | 완료: <strong><?= $completedCount ?></strong>개 | 남은 할 일: <strong><?= $remainingCount ?></strong>개
+  </div>
 
   <div class="row g-3">
     <?php foreach ($todos as $todo): ?>
