@@ -9,19 +9,34 @@ $totalCount = (int)($counts['total'] ?? 0);
 $completedCount = (int)($counts['completed'] ?? 0);
 $remainingCount = $totalCount - $completedCount;
 
-// 검색
+// 검색 및 페이징
 $search = $_GET['search'] ?? '';
+$page = (int)($_GET['page'] ?? 1);
+if ($page < 1) $page = 1;
+$limit = 6;
+$offset = ($page - 1) * $limit;
 
-$sql = "SELECT * FROM todos";
+// 검색 조건에 맞는 TODO 개수 계산 (페이징용)
+$countSql = "SELECT COUNT(*) FROM todos";
 $params = [];
-
 if ($search !== '') {
-  $sql .= " WHERE title LIKE ?";
-  $params[] = "%$search%";
+    $countSql .= " WHERE title LIKE ?";
+    $params[] = "%$search%";
 }
+$countStmtForPage = $pdo->prepare($countSql);
+$countStmtForPage->execute($params);
+$totalTodos = (int)$countStmtForPage->fetchColumn();
 
-$sql .= " ORDER BY id DESC";
-$stmt = $pdo->prepare($sql);
+// 총 페이지 수 계산
+$totalPages = (int)ceil($totalTodos / $limit);
+
+// 현재 페이지의 TODO 목록 가져오기
+$todosSql = "SELECT * FROM todos";
+if ($search !== '') {
+    $todosSql .= " WHERE title LIKE ?";
+}
+$todosSql .= " ORDER BY id DESC LIMIT $limit OFFSET $offset";
+$stmt = $pdo->prepare($todosSql);
 $stmt->execute($params);
 $todos = $stmt->fetchAll();
 ?>
@@ -90,6 +105,25 @@ $todos = $stmt->fetchAll();
       </div>
     <?php endforeach ?>
   </div>
+
+  <!-- 페이징 -->
+  <?php if ($totalPages > 1): ?>
+  <nav class="mt-4">
+    <ul class="pagination justify-content-center">
+      <li class="page-item <?= $page <= 1 ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page - 1 ?>&search=<?= urlencode($search) ?>">이전</a>
+      </li>
+      <?php for ($i = 1; $i <= $totalPages; $i++): ?>
+        <li class="page-item <?= $i == $page ? 'active' : '' ?>">
+          <a class="page-link" href="?page=<?= $i ?>&search=<?= urlencode($search) ?>"><?= $i ?></a>
+        </li>
+      <?php endfor; ?>
+      <li class="page-item <?= $page >= $totalPages ? 'disabled' : '' ?>">
+        <a class="page-link" href="?page=<?= $page + 1 ?>&search=<?= urlencode($search) ?>">다음</a>
+      </li>
+    </ul>
+  </nav>
+  <?php endif; ?>
 
 </div>
 </body>
